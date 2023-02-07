@@ -1,6 +1,6 @@
-/*! jQuery Timepicker Addon - v1.6.3 - 2016-04-20
+/*! jQuery Timepicker Addon - v1.6.4 - 2023-02-06
 * http://trentrichardson.com/examples/timepicker
-* Copyright (c) 2016 Trent Richardson; Licensed MIT */
+* Copyright (c) 2023 Trent Richardson; Licensed MIT */
 (function (factory) {
 	if (typeof define === 'function' && define.amd) {
 		define(['jquery', 'jquery-ui'], factory);
@@ -22,7 +22,7 @@
 	*/
 	$.extend($.ui, {
 		timepicker: {
-			version: "1.6.3"
+			version: "1.6.4"
 		}
 	});
 
@@ -187,14 +187,14 @@
 
 			overrides = {
 				beforeShow: function (input, dp_inst) {
-					if ($.isFunction(tp_inst._defaults.evnts.beforeShow)) {
+					if (typeof tp_inst._defaults.evnts.beforeShow === "function") {
 						return tp_inst._defaults.evnts.beforeShow.call($input[0], input, dp_inst, tp_inst);
 					}
 				},
 				onChangeMonthYear: function (year, month, dp_inst) {
 					// Update the time as well : this prevents the time from disappearing from the $input field.
 					// tp_inst._updateDateTime(dp_inst);
-					if ($.isFunction(tp_inst._defaults.evnts.onChangeMonthYear)) {
+					if (typeof tp_inst._defaults.evnts.onChangeMonthYear === "function") {
 						tp_inst._defaults.evnts.onChangeMonthYear.call($input[0], year, month, dp_inst, tp_inst);
 					}
 				},
@@ -202,7 +202,7 @@
 					if (tp_inst.timeDefined === true && $input.val() !== '') {
 						tp_inst._updateDateTime(dp_inst);
 					}
-					if ($.isFunction(tp_inst._defaults.evnts.onClose)) {
+					if (typeof tp_inst._defaults.evnts.onClose === "function") {
 						tp_inst._defaults.evnts.onClose.call($input[0], dateText, dp_inst, tp_inst);
 					}
 				}
@@ -304,7 +304,7 @@
 			if (tp_inst._defaults.maxDateTime !== undefined && tp_inst._defaults.maxDateTime instanceof Date) {
 				tp_inst._defaults.maxDate = new Date(tp_inst._defaults.maxDateTime.getTime());
 			}
-			tp_inst.$input.bind('focus', function () {
+			tp_inst.$input.on('focus', function () {
 				tp_inst._onFocus();
 			});
 
@@ -315,7 +315,7 @@
 		* add our sliders to the calendar
 		*/
 		_addTimePicker: function (dp_inst) {
-			var currDT = $.trim((this.$altInput && this._defaults.altFieldTimeOnly) ? this.$input.val() + ' ' + this.$altInput.val() : this.$input.val());
+			var currDT = ((this.$altInput && this._defaults.altFieldTimeOnly) ? this.$input.val() + ' ' + this.$altInput.val() : this.$input.val()).trim();
 
 			this.timeDefined = this._parseTime(currDT);
 			this._limitMinMaxDateTime(dp_inst, false);
@@ -362,7 +362,7 @@
 		*/
 		_afterInject: function() {
 			var o = this.inst.settings;
-			if ($.isFunction(o.afterInject)) {
+			if (typeof o.afterInject === "function") {
 				o.afterInject.call(this);
 			}
 		},
@@ -509,7 +509,7 @@
 						selectLocalTimezone(tp_inst);
 					}
 				}
-				this.timezone_select.change(function () {
+				this.timezone_select.on('change', function () {
 					tp_inst._onTimeChange();
 					tp_inst._onSelectHandler();
 					tp_inst._afterInject();
@@ -525,7 +525,7 @@
 				}
 
 				this.$timeObj = $tp.find('.ui_tpicker_time_input');
-				this.$timeObj.change(function () {
+				this.$timeObj.on('change', function () {
 					var timeFormat = tp_inst.inst.settings.timeFormat;
 					var parsedTime = $.datepicker.parseTime(timeFormat, this.value);
 					var update = new Date();
@@ -1077,7 +1077,7 @@
 					for (var i = min; i <= max; i += step) {
 						sel += '<option value="' + i + '"' + (i === val ? ' selected' : '') + '>';
 						if (unit === 'hour') {
-							sel += $.datepicker.formatTime($.trim(format.replace(/[^ht ]/ig, '')), {hour: i}, tp_inst._defaults);
+							sel += $.datepicker.formatTime(format.replace(/[^ht ]/ig, '').trim(), {hour: i}, tp_inst._defaults);
 						}
 						else if (unit === 'millisec' || unit === 'microsec' || i >= 10) { sel += i; }
 						else {sel += '0' + i.toString(); }
@@ -1087,7 +1087,7 @@
 
 					obj.children('select').remove();
 
-					$(sel).appendTo(obj).change(function (e) {
+					$(sel).appendTo(obj).on('change', function (e) {
 						tp_inst._onTimeChange();
 						tp_inst._onSelectHandler();
 						tp_inst._afterInject();
@@ -2286,6 +2286,6 @@
 	/*
 	* Keep up with the version
 	*/
-	$.timepicker.version = "1.6.3";
+	$.timepicker.version = "1.6.4";
 
 }));
